@@ -5,7 +5,7 @@
 #include "wrapped_list.hpp"
 
 #include <netManager.hpp>
-#include <item_list.hpp>
+#include <list.hpp>
 #include <client_utils.hpp>
 
 using namespace client_utils;
@@ -15,13 +15,22 @@ namespace Wrapper
 template <typename Inner>
 wrapped_list<Inner>::wrapped_list()
     : base_wrapper<Inner>{}
+{}
+
+template<typename Inner>
+void wrapped_list<Inner>::registerToQml() const
 {
+    std::string str{Inner::qmlName()};
+    str += "List";
+
+    qmlRegisterUncreatableType<Inner>(Inner::uri(), 1, 0, str.c_str(), "");
+    Interface::bridge::instance().context()->setContextProperty(Inner::key(), this->inner);
 }
 
 template<typename Inner>
 void wrapped_list<Inner>::get() const
 {
-    Interface::netManager::instance().getFromKey(this->inner->key,
+    Interface::netManager::instance().getFromKey(Inner::key(),
                                                  [this](const QByteArray& bytes)
     {
         this->inner->read(to_Json(bytes));
@@ -36,16 +45,17 @@ void wrapped_list<Inner>::makeConnections() const
                   this,
                   [this] (int id)
     {
-        Json::Value obj;
+        QJsonObject obj{};
         auto item{this->inner->item_at_id(id)};
         item.write(obj);
 
-        Json::Value json;
-        json[item.key] = obj;
+        const auto key{Inner::key()};
 
-        Interface::netManager::instance().putToKey(this->inner->key,
-            to_QByteArray(json),
-            [this](const Json::Value& rep)
+        QJsonObject json{{ key, obj }};
+
+        Interface::netManager::instance().putToKey(key,
+            QJsonDocument{json}.toJson(),
+            [this] (const QJsonObject& rep)
         {},
         "Validate error");
     });
@@ -55,9 +65,9 @@ void wrapped_list<Inner>::makeConnections() const
                   this,
                   [this] ()
     {
-        Interface::netManager::instance().postToKey(this->inner->key,
+        Interface::netManager::instance().postToKey(Inner::key(),
                           QByteArray{},
-                          [this](const Json::Value& rep)
+                          [this](const QJsonObject& rep)
         { this->inner->appendWith(rep); },
         "Add error");
     });
@@ -67,20 +77,15 @@ void wrapped_list<Inner>::makeConnections() const
                   this,
                   [this] (const QJsonObject& obj)
     {
-        QJsonDocument doc{obj};
-        QByteArray data{doc.toJson()};
-
-        Json::Value val;
-        Json::Reader reader;
-        reader.parse(data.toStdString(), val);
-
-        Interface::netManager::instance().postToKey(this->inner->key,
-            data,
-            [this, val](const Json::Value& res)
+            Interface::netManager::instance().postToKey(Inner::key(),
+            QJsonDocument{obj}.toJson(),
+            [this, obj] (const QJsonObject& res)
         {
-            Json::Value concat{val};
-            concatenate(concat, res);
-            this->inner->appendWith(concat);
+            auto map{res.toVariantMap()};
+            map.insert(obj.toVariantMap());
+
+            const auto json{QJsonObject::fromVariantMap(map)};
+            this->inner->appendWith(json);
         },
         "addWith error");
     });
@@ -97,13 +102,11 @@ void wrapped_list<Inner>::connectRemove() const
                   [this] (int id)
     {
         this->inner->erase(id);
+        const QJsonObject json{{"id", id}};
 
-        Json::Value json;
-        json["id"] = id;
-
-        Interface::netManager::instance().deleteToKey(this->inner->key,
-            to_QByteArray(json),
-            [this, id](const Json::Value& rep) {},
+        Interface::netManager::instance().deleteToKey(Inner::key(),
+            QJsonDocument{json}.toJson(),
+            [this, id](const QJsonObject&) {},
         "Remove Error");
     });
 }

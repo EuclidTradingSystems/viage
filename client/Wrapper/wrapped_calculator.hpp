@@ -4,32 +4,32 @@
 #include <duckx.hpp>
 
 #include <base_wrapper.hpp>
-#include <c_list.hpp>
-#include <Item/c_senior_citizen.hpp>
+#include <list.hpp>
+#include <Item/senior_citizen.hpp>
 #include "life_expectency.hpp"
 
 namespace Data
 {
-class c_rent;
+class rent;
 }
 
 namespace Calculator
 {
 using namespace Wrapper;
 
-class wrapped_calculator : public base_wrapper<c_list<c_senior_citizen>>
+class wrapped_calculator : public base_wrapper<list<senior_citizen>>
 {
 public:
     wrapped_calculator();
 
 private:
     life_expectency exp;
-    c_rent* rent;
+    rent* rent;
     QLocale::Language lingo;
     std::string docxName;
     std::string docxPath;
 
-    const std::string sex_string(const senior_citizen_item::sexes& sex);
+    const std::string sex_string(const senior_citizen::sexes& sex);
     void calculate_rent();
     void write_to_file();
 

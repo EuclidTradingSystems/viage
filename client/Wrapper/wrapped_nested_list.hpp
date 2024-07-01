@@ -15,13 +15,13 @@ template <typename Inner, typename Outer>
 class wrapped_nested_list : public wrapped_nested_item<Inner, Outer>
 {
 public:
-    explicit wrapped_nested_list(Data::c_list<Outer>* parentList);
+    explicit wrapped_nested_list(Data::list<Outer>* parentList);
 
 private:
     const std::string key;
     void add_in_with(int id,
                      const QJsonObject &obj = {},
-                     Data::c_list<Outer>* parentList = nullptr);
+                     Data::list<Outer> *parentList = nullptr);
 };
 
 }

@@ -15,7 +15,7 @@ bool document_filter_model::filterAcceptsRow(int sourceRow, const QModelIndex &s
 {
     const auto& cat{sourceModel()->data(
                     sourceModel()->index(sourceRow, 0, sourceParent),
-                    c_document::CategoryRole)};
+                    document::CategoryRole)};
 
     return cat.toInt() == category;
 }
@@ -25,12 +25,12 @@ bool document_filter_model::lessThan(const QModelIndex& left, const QModelIndex&
     return true;
 }
 
-document_item::categories document_filter_model::getCategory() const
+document::categories document_filter_model::getCategory() const
 {
     return category;
 }
 
-void document_filter_model::setCategory(document_item::categories newCategory)
+void document_filter_model::setCategory(document::categories newCategory)
 {
     category = newCategory;
 }

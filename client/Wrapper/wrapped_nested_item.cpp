@@ -11,29 +11,29 @@ wrapped_nested_item<Inner, Outer>::wrapped_nested_item()
 }
 
 template<typename Inner, typename Outer>
-std::string wrapped_nested_item<Inner, Outer>::makeKey(Data::c_list<Outer>* parentList)
+std::string wrapped_nested_item<Inner, Outer>::makeKey(Data::list<Outer>* parentList)
 {
-    std::string newkey = parentList->key;
+    std::string newkey = parentList->key();
     newkey.append("/");
-    newkey.append(this->inner->key);
+    newkey.append(this->inner->key());
 
     return newkey;
 }
 
 template<typename Inner, typename Outer>
-std::string wrapped_nested_item<Inner, Outer>::makeKey(Data::c_list<Outer>* parentList, int id)
+std::string wrapped_nested_item<Inner, Outer>::makeKey(Data::list<Outer>* parentList, int id)
 {
-    std::string newkey = parentList->key;
+    std::string newkey = parentList->key();
     newkey.append("/");
     newkey.append(std::to_string(id));
     newkey.append("/");
-    newkey.append(this->inner->key);
+    newkey.append(this->inner->key());
 
     return newkey;
 }
 
 template<typename Inner, typename Outer>
-void wrapped_nested_item<Inner, Outer>::makeConnections(Data::c_list<Outer>* parentList)
+void wrapped_nested_item<Inner, Outer>::makeConnections(Data::list<Outer>* parentList)
 {
     this->connect(this->inner,
                   &Inner::validate,
@@ -46,7 +46,7 @@ void wrapped_nested_item<Inner, Outer>::makeConnections(Data::c_list<Outer>* par
         {
             parentList->setItemAtId(id, outer);
 
-            Interface::netManager::instance().putToKey(makeKey(parentList).c_str(),
+            Interface::netManager::instance().putToKey(makeKey(parentList).str(),
                 this->inner->toData(id),
                 [=](const Json::Value& rep)
             {
@@ -73,7 +73,7 @@ void wrapped_nested_item<Inner, Outer>::makeConnections(Data::c_list<Outer>* par
 
         if (json.empty())
         {
-            Interface::netManager::instance().getFromKey(makeKey(parentList, id).c_str(),
+            Interface::netManager::instance().getFromKey(makeKey(parentList, id).str(),
                                                          [this](const QByteArray& rep)
             {
                 if(!rep.isEmpty())

@@ -7,29 +7,29 @@
 
 #include "wrapped_calculator.hpp"
 #include <client.hpp>
-#include <Item/c_rent.hpp>
+#include <Item/rent.hpp>
 #include <Interface/netManager.hpp>
 
 namespace Calculator
 {
 wrapped_calculator::wrapped_calculator()
-    : base_wrapper<c_list<c_senior_citizen>>{}
+    : base_wrapper<list<senior_citizen>>{}
     , exp{inner}
-    , rent{new c_rent{}}
+    , rent{new Data::rent}
 {
     inner->appendItems(); // at least one senior for the calculation
 
     this->connect(rent,
-                  &c_rent::calculate,
+                  &rent::calculate,
                   this,
                   &wrapped_calculator::calculate_rent);
 
     this->connect(rent,
-                  &c_rent::writeToFile,
+                  &rent::writeToFile,
                   this,
                   &wrapped_calculator::write_to_file);
 
-    Interface::bridge::instance().context()->setContextProperty(c_rent::key, rent);
+    Interface::bridge::instance().context()->setContextProperty(Data::rent::key(), rent);
 
     if (client_utils::is_german())
     {
@@ -52,9 +52,9 @@ wrapped_calculator::wrapped_calculator()
     // report error throug the net manager as it is connected to the bridge
 }
 
-const std::string wrapped_calculator::sex_string(const senior_citizen_item::sexes& sex)
+const std::string wrapped_calculator::sex_string(const senior_citizen::sexes& sex)
 {
-    if (sex == senior_citizen_item::M)
+    if (sex == senior_citizen::M)
         if (lingo == QLocale::German)
             return "Herr";
         else
@@ -130,7 +130,7 @@ void wrapped_calculator::write_to_file()
 
         auto partner{inner->item_at(i)};
         const std::string sex{sex_string(partner.sex)};
-        str = QString::fromStdString(partner.birthDay);
+        str = partner.birthDay.toString("dd.MM.yyyy");
 
         if (lingo == QLocale::German)
         {

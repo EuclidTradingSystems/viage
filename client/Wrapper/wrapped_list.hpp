@@ -23,6 +23,8 @@ public:
     void makeConnections() const;
     void get() const;
 
+    void registerToQml() const override;
+
 protected:
     void connectRemove() const;
 };

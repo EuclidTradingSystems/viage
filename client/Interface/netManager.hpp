@@ -1,8 +1,6 @@
 #ifndef NETMANAGER_HPP
 #define NETMANAGER_HPP
 
-#include <json/json.h>
-
 #include <QObject>
 #include <QSaveFile>
 #include <QNetworkAccessManager>
@@ -54,17 +52,17 @@ public:
                     const char* params = "");
     void putToKey(const char* key,
                   const QByteArray& data,
-                  const std::function<void (const Json::Value &)> &callback,
+                  const std::function<void (const QJsonObject &)> &callback,
                   const QString& errorPrefix = "",
                   const std::function<void ()>& errorCallback = [](){},
                   const std::function<void (qint64, qint64)>& onProgress = [](qint64 byteSent, qint64 totalBytes){});
     void postToKey(const char* key,
                    const QByteArray& data,
-                   const std::function<void (const Json::Value &)> &callback,
+                   const std::function<void (const QJsonObject &)> &callback,
                    const QString& errorPrefix = "");
     void deleteToKey(const char* key,
                      const QByteArray& data,
-                     const std::function<void (const Json::Value &)> &callback,
+                     const std::function<void (const QJsonObject &)> &callback,
                      const QString& errorPrefix = "");
 
     void userChanged(int newId)
@@ -86,7 +84,7 @@ private:
     void setCallback(QNetworkReply* reply,
                      const std::function<void (const QByteArray &)> &callback);
     void setCallback(QNetworkReply* reply,
-                     const std::function<void (const Json::Value &)> &callback,
+                     const std::function<void (const QJsonObject &)> &callback,
                      const QString& errorPrefix,
                      const std::function<void ()>& errorCallback = [](){});
 

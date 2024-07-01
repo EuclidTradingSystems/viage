@@ -16,11 +16,11 @@ class wrapped_nested_item : public wrapped_list<Inner>
 public:
     explicit wrapped_nested_item();
 
-    void makeConnections(Data::c_list<Outer>* parentList);
+    void makeConnections(Data::list<Outer>* parentList);
 
-  protected:
-    std::string makeKey(Data::c_list<Outer>* parentList);
-    std::string makeKey(Data::c_list<Outer>* parentList, int id);
+protected:
+    std::string makeKey(Data::list<Outer>* parentList);
+    std::string makeKey(Data::list<Outer>* parentList, int id);
 };
 
 }

@@ -19,7 +19,7 @@ public:
 protected:
     explicit base_wrapper();
 
-    void registerToQml() const;
+    virtual void registerToQml() const;
 
     Inner* inner;
 };

@@ -4,11 +4,11 @@
 #include <QString>
 #include <QTemporaryDir>
 
-#include <Item/c_account.hpp>
-#include <Item/c_owner.hpp>
-#include <Item/c_user.hpp>
-#include <Item/c_company.hpp>
-#include <Item/c_team.hpp>
+#include <Item/account.hpp>
+#include <Item/owner.hpp>
+#include <Item/user.hpp>
+#include <Item/company.hpp>
+#include <Item/team.hpp>
 
 namespace Calculator
 {
@@ -36,9 +36,9 @@ public:
     client(client const&) = delete;
     void operator = (client const&) = delete;
 
-    Data::c_list<Data::c_account>* get_accounts() const;
-    Data::c_list<Data::c_document>* get_documents() const;
-    Data::c_list<Data::People::c_user>* get_users() const;
+    Data::list<Data::account>* get_accounts() const;
+    Data::list<Data::document>* get_documents() const;
+    Data::list<Data::People::user>* get_users() const;
 
     static const QTemporaryDir tempDir;
     static const QString get_tempPath();
@@ -48,16 +48,16 @@ private:
 
     Calculator::wrapped_calculator* calculator;
 
-    Wrapper::wrapped_list<Data::c_list<Data::c_account>>* accounts;
-    Wrapper::wrapped_nested_list<Data::c_list<Data::People::c_owner>, Data::c_account>* owners;
-    Wrapper::wrapped_nested_list<Data::c_list<Data::People::c_contact>, Data::c_account>* contacts;
-    Wrapper::wrapped_nested_item<Data::Places::c_habitat, Data::c_account>* habitat;
-    Wrapper::wrapped_nested_item<Data::Places::c_exterior, Data::c_account>* exterior;
-    Wrapper::wrapped_nested_list<Data::c_list<Data::c_document>, Data::c_account>* documents;
+    Wrapper::wrapped_list<Data::list<Data::account>>* accounts;
+    Wrapper::wrapped_nested_list<Data::list<Data::People::owner>, Data::account>* owners;
+    Wrapper::wrapped_nested_list<Data::list<Data::People::contact>, Data::account>* contacts;
+    Wrapper::wrapped_nested_item<Data::Places::habitat, Data::account>* habitat;
+    Wrapper::wrapped_nested_item<Data::Places::exterior, Data::account>* exterior;
+    Wrapper::wrapped_nested_list<Data::list<Data::document>, Data::account>* documents;
 
-    Wrapper::wrapped_list<Data::c_list<Data::People::c_user>>* users;
-    Wrapper::wrapped_list<Data::c_list<Data::c_company>>* companies;
-    Wrapper::wrapped_list<Data::c_list<Data::c_team>>* teams;
+    Wrapper::wrapped_list<Data::list<Data::People::user>>* users;
+    Wrapper::wrapped_list<Data::list<Data::company>>* companies;
+    Wrapper::wrapped_list<Data::list<Data::team>>* teams;
 };
 
 

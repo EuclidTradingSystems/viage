@@ -70,22 +70,22 @@ set(PROJECT_SOURCES
     Model/account_filter_model.cpp
     Model/document_filter_model.cpp
     Model/user_filter_model.cpp
-    Data/c_base_data.hpp
-    Data/c_list.hpp
-    Data/Item/c_address.cpp
-    Data/Item/c_person.hpp
-    Data/Item/c_senior_citizen.cpp
-    Data/Item/c_user.cpp
-    Data/Item/c_infant.hpp
-    Data/Item/c_contact.cpp
-    Data/Item/c_owner.cpp
-    Data/Item/c_habitat.cpp
-    Data/Item/c_exterior.cpp
-    Data/Item/c_document.cpp
-    Data/Item/c_account.cpp
-    Data/Item/c_rent.cpp
-    Data/Item/c_company.cpp
-    Data/Item/c_team.cpp
+    Data/base_data.hpp
+    Data/list.hpp
+    Data/Item/address.cpp
+    Data/Item/person.hpp
+    Data/Item/senior_citizen.cpp
+    Data/Item/user.cpp
+    Data/Item/infant.hpp
+    Data/Item/contact.cpp
+    Data/Item/owner.cpp
+    Data/Item/habitat.cpp
+    Data/Item/exterior.cpp
+    Data/Item/document.cpp
+    Data/Item/account.cpp
+    Data/Item/rent.cpp
+    Data/Item/company.cpp
+    Data/Item/team.cpp
     resources/viage.qrc
     ${ALT_QRC}
     ${QM_FILES}
@@ -144,8 +144,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Quick
     Qt6::Multimedia
     Qt6::Svg
-    duckx
-    mutual)
+    duckx)
 
 qt_import_qml_plugins(${PROJECT_NAME})
 

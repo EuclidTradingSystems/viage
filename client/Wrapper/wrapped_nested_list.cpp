@@ -7,7 +7,7 @@
 namespace Wrapper
 {
 template <typename Inner, typename Outer>
-wrapped_nested_list<Inner, Outer>::wrapped_nested_list(Data::c_list<Outer>* parentList)
+wrapped_nested_list<Inner, Outer>::wrapped_nested_list(Data::list<Outer>* parentList)
     : wrapped_nested_item<Inner, Outer>{}
     , key{this->makeKey(parentList)}
 {
@@ -32,22 +32,21 @@ wrapped_nested_list<Inner, Outer>::wrapped_nested_list(Data::c_list<Outer>* pare
 template<typename Inner, typename Outer>
 void wrapped_nested_list<Inner, Outer>::add_in_with(int id,
                                                     const QJsonObject& obj,
-                                                    Data::c_list<Outer>* parentList)
+                                                    Data::list<Outer>* parentList)
 {
     auto json{obj};
-    Json::Value val{to_Json(obj)};
-
     json[Outer::foreign_key] = id;
-    QJsonDocument doc{json};
-    QByteArray data{doc.toJson(QJsonDocument::Compact)};
+    QJsonDocument data{json};
 
     Interface::netManager::instance().postToKey(key.c_str(),
-        data,
-        [this, val, parentList, id](const Json::Value& res)
+        data.toJson(),
+        [this, obj, parentList, id] (const QJsonObject& res)
     {
-        Json::Value concat{val};
-        concatenate(concat, res);
-        this->inner->appendWith(concat);
+        auto map{res.toVariantMap()};
+        map.insert(obj.toVariantMap());
+
+        const auto json{QJsonObject::fromVariantMap(map)};
+        this->inner->appendWith(json);
 
         if (parentList)
         {

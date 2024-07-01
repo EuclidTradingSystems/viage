@@ -7,6 +7,3 @@
 [submodule "client/3rdparty/android_openssl"]
 	path = client/3rdparty/android_openssl
 	url = https://github.com/KDAB/android_openssl.git
-[submodule "lib/3rdparty/jsoncpp"]
-	path = lib/3rdparty/jsoncpp
-	url = https://github.com/open-source-parsers/jsoncpp.git

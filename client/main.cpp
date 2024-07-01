@@ -34,8 +34,8 @@ int main(int argc, char* argv[])
 #ifndef EMSCRIPTEN
     qDebug() << "Device supports OpenSSL: " << QSslSocket::supportsSsl();
 
-    QString host{"https://viage.euclidtradingsystems.com"};
-//    QString host{"https://viagetestrive.euclidtradingsystems.com"};
+    // QString host{"https://viage.euclidtradingsystems.com"};
+   QString host{"https://viagetestrive.euclidtradingsystems.com"};
 //    QString host{"http://127.0.0.0:8080"};
 
     for (int i = 0; i < argc; i++)

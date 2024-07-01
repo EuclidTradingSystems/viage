@@ -2,7 +2,7 @@
 #include <wobjectimpl.h>
 
 #include "list_model.hpp"
-#include <c_list.hpp>
+#include <list.hpp>
 
 namespace Data
 {
@@ -27,7 +27,7 @@ template <typename T>
 QVariant list_model<T>::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || !m_list)
-        return QVariant();
+        return QVariant{};
 
     const T item = m_list->items().at(index.row());
     return item.data(role);
@@ -66,7 +66,7 @@ QHash<int, QByteArray> list_model<T>::roleNames() const
 }
 
 template <typename T>
-void list_model<T>::setList(c_list<T>* newList)
+void list_model<T>::setList(list<T>* newList)
 {
     beginResetModel();
 
@@ -77,26 +77,26 @@ void list_model<T>::setList(c_list<T>* newList)
 
     if (m_list)
     {
-        connect(m_list, &c_list<T>::preItemsAppended,
+        connect(m_list, &list<T>::preItemsAppended,
                 this, [=](int number)
         {
             const int index = m_list->size();
             beginInsertRows(QModelIndex(), index, index + number - 1);
         });
 
-        connect(m_list, &c_list<T>::postItemsAppended,
+        connect(m_list, &list<T>::postItemsAppended,
                 this, [=]()
         { endInsertRows(); });
 
-        connect(m_list, &c_list<T>::preItemsRemoved,
+        connect(m_list, &list<T>::preItemsRemoved,
                 this, [=](int first, int last)
         { beginRemoveRows(QModelIndex(), first, last); });
 
-        connect(m_list, &c_list<T>::postItemsRemoved,
+        connect(m_list, &list<T>::postItemsRemoved,
                 this, [=]()
         { endRemoveRows(); });
 
-        connect(m_list, &c_list<T>::dataChangedAt,
+        connect(m_list, &list<T>::dataChangedAt,
                 this, [this](int row)
         { emit dataChanged(index(row), index(row)); });
     }
@@ -105,7 +105,7 @@ void list_model<T>::setList(c_list<T>* newList)
 }
 
 template<typename T>
-c_list<T>* list_model<T>::getList() const
+list<T>* list_model<T>::getList() const
 {
     return m_list;
 }

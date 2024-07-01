@@ -2,7 +2,7 @@
 #define EXPECTENCY
 
 #include <QDate>
-#include <Item/c_senior_citizen.hpp>
+#include <Item/senior_citizen.hpp>
 #include <client_utils.hpp>
 
 using namespace client_utils;
@@ -10,7 +10,7 @@ using namespace client_utils;
 namespace Data
 {
 template <typename T>
-class c_list;
+class list;
 }
 
 namespace Calculator
@@ -21,24 +21,24 @@ using namespace People;
 class life_expectency
 {
 public:
-    explicit life_expectency(c_list<c_senior_citizen>* senior_citizens);
+    explicit life_expectency(list<senior_citizen>* senior_citizens);
 
     double get_expectency(const QDate& date);
 
 private:
-    c_list<c_senior_citizen>* seniors;
+    list<senior_citizen>* seniors;
 
     struct dto
     {
-        dto() {};
-        dto(const senior_citizen_item& senior, const QDate& date)
+        dto() {}
+        dto(const senior_citizen& senior, const QDate& date)
             : sex{senior.sex}
-            , thousand_bDAy{to_QDate(senior.birthDay).year() * 1000}
-            , age{to_QDate(senior.birthDay).daysTo(date) / 365.25}
+            , thousand_bDAy{senior.birthDay.year() * 1000}
+            , age{senior.birthDay.daysTo(date) / 365.25}
             , age_trunc{std::trunc(age)}
             , age_diff{age - age_trunc}
         {}
-        senior_citizen_item::sexes sex{senior_citizen_item::M};
+        senior_citizen::sexes sex{senior_citizen::M};
         int thousand_bDAy{0};
         double age{0};
         double age_trunc{0};

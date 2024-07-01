@@ -7,18 +7,18 @@
 
 #include <wobjectdefs.h>
 
-#include <Item/c_user.hpp>
-#include <Item/c_document.hpp>
+#include <Item/user.hpp>
+#include <Item/document.hpp>
 
 class QQmlApplicationEngine;
 class QQmlContext;
 
 namespace Data
 {
-struct c_account;
+struct account;
 
 template <typename T>
-class c_list;
+class list;
 
 template <typename T>
 class list_model;
@@ -140,7 +140,7 @@ public:
     void documentsCompletedChanged()
     W_SIGNAL(documentsCompletedChanged)
 
-    Data::People::user_item::clearances getClearance() const;
+    Data::People::user::clearances getClearance() const;
     void setClearance(int newClearance);
     void clearanceChanged()
     W_SIGNAL(clearanceChanged)
@@ -183,10 +183,10 @@ public:
     float getDownloadProgress() const;
     void setDownloadProgress(float newDownloadProgress);
     void downloadProgressChanged()
-    W_SIGNAL(downloadProgressChanged);
+    W_SIGNAL(downloadProgressChanged)
 
     W_PROPERTY(bool, documentsCompleted READ getDocumentsCompleted NOTIFY documentsCompletedChanged)
-    W_PROPERTY(Data::People::user_item::clearances, clearance READ getClearance NOTIFY clearanceChanged)
+    W_PROPERTY(Data::People::user::clearances, clearance READ getClearance NOTIFY clearanceChanged)
     W_PROPERTY(int, userId READ getUserId NOTIFY userIdChanged)
     W_PROPERTY(int, accountId READ getAccountId WRITE setAccoountId NOTIFY accountIdChanged)
     W_PROPERTY(bool, ppe READ getPPE WRITE setPPE NOTIFY ppeChanged)
@@ -200,11 +200,11 @@ public:
     W_PROPERTY(float, downloadProgress READ getDownloadProgress WRITE setDownloadProgress NOTIFY downloadProgressChanged)
 
 private:
-    bridge() {};
+    bridge() {}
 
-    Data::list_model<Data::c_account>* accountModel;
+    Data::list_model<Data::account>* accountModel;
     Data::account_filter_model* accountFilter;
-    Data::list_model<Data::People::c_user>* userModel;
+    Data::list_model<Data::People::user>* userModel;
     Data::People::user_filter_model* userFilter;
     Data::People::user_filter_model* selectedUser;
 
@@ -214,12 +214,12 @@ private:
     bool hiring{false};
 
     bool documentsCompleted{false};
-    void check_doc_completion();
+    void check_docompletion();
     void cleanup_docs(int ai);
     void upload_doc(int index);
 
     int userId{0};
-    Data::People::user_item::clearances clearance{Data::People::user_item::None};
+    Data::People::user::clearances clearance{Data::People::user::None};
 
     int accountId{0};
     int accountState{0};
@@ -235,7 +235,7 @@ private:
     const QString filePath(const QUrl& directory,
                            const QString& fileName) const;
 
-    void changePwd(const char* key, const Json::Value& json) const;
+    void changePwd(const char* key, const QJsonObject& json) const;
 };
 
 }

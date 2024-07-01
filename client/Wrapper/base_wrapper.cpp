@@ -23,8 +23,8 @@ base_wrapper<Inner>::base_wrapper()
 template<typename Inner>
 void base_wrapper<Inner>::registerToQml() const
 {
-    qmlRegisterUncreatableType<Inner>(inner->uri, 1, 0, inner->qmlName, "");
-    Interface::bridge::instance().context()->setContextProperty(inner->key, inner);
+    qmlRegisterUncreatableType<Inner>(Inner::uri(), 1, 0, Inner::qmlName(), "");
+    Interface::bridge::instance().context()->setContextProperty(Inner::key(), inner);
 }
 
 template<typename Inner>

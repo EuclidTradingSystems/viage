@@ -7,7 +7,7 @@
 namespace Data
 {
 template <typename T>
-class c_list;
+class list;
 
 template <typename T>
 class list_model : public QAbstractListModel
@@ -29,13 +29,13 @@ public:
 
     QHash<int, QByteArray> roleNames() const override;
 
-    c_list<T>* getList() const;
-    void setList(c_list<T>* newList);
+    list<T>* getList() const;
+    void setList(list<T>* newList);
 
-    W_PROPERTY(c_list<T>*, list READ getList WRITE setList)
+    W_PROPERTY(list<T>*, list READ getList WRITE setList)
 
 protected:
-    c_list<T>* m_list{nullptr};
+    list<T>* m_list{nullptr};
 };
 }
 

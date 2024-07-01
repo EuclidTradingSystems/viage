@@ -1,5 +1,7 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 #include <wobjectimpl.h>
 
@@ -55,8 +57,6 @@ void netManager::init(const QString& authentication_arguments,
             });
 }
 
-using namespace Json;
-
 void netManager::authenticate(const QString& username,
                               const QString& password)
 {
@@ -93,28 +93,25 @@ void netManager::authenticate(const QString& username,
         else
         {
             const auto res = reply->readAll();
-            Value json;
-            Reader reader;
-            reader.parse(res.toStdString(), json);
+            const auto json = QJsonDocument::fromJson(res).object();
 
-            if (json.isMember("sessionId"))
+            if (json.contains("sessionId"))
             {
                 if (authenticating)
                 {
                     authenticating = false;
 
-                    if (json.isMember("sessionId") && json["sessionId"].isString())
+                    if (json.contains("sessionId") && json["sessionId"].isString())
                     {
-                        const auto str{json["sessionId"].asString()};
-                        rqst.setRawHeader("sessionId",
-                                          QByteArray::fromStdString(str));
+                        const auto str{json["sessionId"].toString()};
+                        rqst.setRawHeader("sessionId", str.toUtf8());
                     }
 
-                    if (json.isMember("id") && json["id"].isDouble())
-                        emit userChanged(json["id"].asInt());
+                    if (json.contains("id") && json["id"].isDouble())
+                        emit userChanged(json["id"].toInt());
 
-                    if (json.isMember("clearance") && json["clearance"].isDouble())
-                        emit clearanceChanged(json["clearance"].asInt());
+                    if (json.contains("clearance") && json["clearance"].isDouble())
+                        emit clearanceChanged(json["clearance"].toInt());
 
                     emit loggedIn(true);
                 }
@@ -170,7 +167,7 @@ void netManager::getFromKey(const char* key,
 
 void netManager::putToKey(const char* key,
                           const QByteArray& data,
-                          const std::function<void (const Value &)>& callback,
+                          const std::function<void (const QJsonObject &)>& callback,
                           const QString& errorPrefix,
                           const std::function<void ()>& errorCallback,
                           const std::function<void (qint64, qint64)>& onProgress)
@@ -186,7 +183,7 @@ void netManager::putToKey(const char* key,
 
 void netManager::postToKey(const char* key,
                            const QByteArray &data,
-                           const std::function<void (const Value &)> &callback,
+                           const std::function<void (const QJsonObject &)> &callback,
                            const QString& errorPrefix)
 {
     setRequest(key);
@@ -196,7 +193,7 @@ void netManager::postToKey(const char* key,
 
 void netManager::deleteToKey(const char *key,
                              const QByteArray &data,
-                             const std::function<void (const Value &)> &callback,
+                             const std::function<void (const QJsonObject &)> &callback,
                              const QString& errorPrefix)
 {
     setRequest(key);
@@ -205,7 +202,7 @@ void netManager::deleteToKey(const char *key,
 }
 
 void netManager::setCallback(QNetworkReply* reply,
-                             const std::function<void (const Value &)> &callback,
+                             const std::function<void (const QJsonObject &)> &callback,
                              const QString& errorPrefix,
                              const std::function<void ()>& errorCallback)
 {
@@ -213,18 +210,15 @@ void netManager::setCallback(QNetworkReply* reply,
             this,
             [reply, callback, errorPrefix, errorCallback, this]()
     {
-        const auto res = reply->readAll();
-        Value json;
-        Reader reader;
-        reader.parse(res.toStdString(), json);
+        const auto json{QJsonDocument::fromJson(reply->readAll()).object()};
 
-        if (json.isMember("success"))
+        if (json.contains("success"))
         {
-            if (json["success"].asBool())
+            if (json["success"].toBool())
                 callback(json);
             else
             {
-                emit replyError(errorPrefix, QString::fromStdString(json["errorMessage"].asString()));
+                emit replyError(errorPrefix, json["errorMessage"].toString());
                 errorCallback();
             }
         }
